@@ -6,9 +6,10 @@ import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 
 export default function Agung() {
   const { parameters } = useParams();
-  const [redirectData, setRedirectData] = useState([]); // Menggunakan array untuk menampung
+  const [redirectData, setRedirectData] = useState([]);
   const [loading, setLoading] = useState("");
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isLoadingData, setIsLoadingData] = useState(true); // Tambahkan state untuk menandai proses pengunduhan data
 
   useEffect(() => {
     axios
@@ -19,17 +20,19 @@ export default function Agung() {
           .get(downloadURL)
           .then((downloadResp) => {
             setRedirectData(downloadResp.data);
-            console.log("s", redirectData);
-            console.log("saa", downloadResp.data);
+            setIsLoadingData(false); // Setelah selesai unduh data, nonaktifkan status loading
           })
           .catch(function (error) {
             console.log(error);
+            setIsLoadingData(false); // Nonaktifkan status loading jika terjadi kesalahan
           });
       })
       .catch(function (error) {
         console.log(error);
+        setIsLoadingData(false); // Nonaktifkan status loading jika terjadi kesalahan
       });
   }, []);
+
   useEffect(() => {
     function addLoading() {
       setLoading((prevLoadings) =>
@@ -52,21 +55,20 @@ export default function Agung() {
       const key = Object.keys(matchedLink)[0];
       const link = matchedLink[key];
 
-      // Animasi loading dari 0% ke 20% ke 100%
+      // Animasi loading dari 0% ke 100%
       setLoadingProgress(0);
       const interval = setInterval(() => {
         setLoadingProgress((prevProgress) => {
-          if (prevProgress < 20) return prevProgress + 1;
-          if (prevProgress === 20) return 100;
+          if (prevProgress < 100) return prevProgress + 1;
           return prevProgress;
         });
-      }, 50); // Interval setiap 50ms
+      }, 14.5); // Interval setiap 25ms
 
       // Redirect setelah selesai animasi
       setTimeout(() => {
         clearInterval(interval);
         window.location.href = link;
-      }, 2500); // Atur sesuai kebutuhan
+      }, 2500);
     }
   }, [parameters, redirectData]);
 
@@ -76,7 +78,14 @@ export default function Agung() {
 
   return (
     <div>
-      {parameters in redirectData ? (
+      {isLoadingData ? (
+        <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
+          <p>
+            <FontAwesomeIcon icon={faCircleNotch} spin className="me-2" />
+            Loading {loading}
+          </p>
+        </div>
+      ) : parameters in redirectData ? (
         <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
           <p>
             <span className="text-4xl">404</span> Not Found 44
@@ -84,8 +93,9 @@ export default function Agung() {
         </div>
       ) : (
         <div>
-          {redirectData.find((item) => Object.keys(item).includes(parameters)) ? 
-          (
+          {redirectData.find((item) =>
+            Object.keys(item).includes(parameters)
+          ) ? (
             <div className="loading-bar">
               <div className="progress" style={loadingBarStyle}></div>
               <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
@@ -97,22 +107,28 @@ export default function Agung() {
             </div>
           ) : (
             <div>
-            {parameters in redirectData? ( 
-              <div className="loading-bar">
-              <div className="progress" style={loadingBarStyle}></div>
-              <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
-                <p>
-                  <FontAwesomeIcon icon={faCircleNotch} spin className="me-2" />
-                  Loading {loading}
-                </p>
-              </div>
-            </div>) : (
-               <div className='py-[25%] text-center text-3xl text-white h-screen bg-gray-500'>
-               <p>
-                   <span className='text-4xl'>404</span> Not Found 
-                 </p>
-             </div>)}
-          </div>
+              {parameters in redirectData ? (
+                <div className="loading-bar">
+                  <div className="progress" style={loadingBarStyle}></div>
+                  <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
+                    <p>
+                      <FontAwesomeIcon
+                        icon={faCircleNotch}
+                        spin
+                        className="me-2"
+                      />
+                      Loading {loading}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
+                  <p>
+                    <span className="text-4xl">404</span> Not Found
+                  </p>
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
