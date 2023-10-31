@@ -79,7 +79,7 @@ export default function Agung() {
       {parameters in redirectData ? (
         <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
           <p>
-            <span className="text-4xl">404</span> Not Found
+            <span className="text-4xl">404</span> Not Found 44
           </p>
         </div>
       ) : (
