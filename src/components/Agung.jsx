@@ -96,11 +96,23 @@ export default function Agung() {
               </div>
             </div>
           ) : (
-            <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
-              <p>
-                <span className="text-4xl">404</span> Not Found
-              </p>
-            </div>
+            <div>
+            {parameters in redirectData? ( 
+              <div className="loading-bar">
+              <div className="progress" style={loadingBarStyle}></div>
+              <div className="py-[25%] text-center text-3xl text-white h-screen bg-gray-500">
+                <p>
+                  <FontAwesomeIcon icon={faCircleNotch} spin className="me-2" />
+                  Loading {loading}
+                </p>
+              </div>
+            </div>) : (
+               <div className='py-[25%] text-center text-3xl text-white h-screen bg-gray-500'>
+               <p>
+                   <span className='text-4xl'>404</span> Not Found 
+                 </p>
+             </div>)}
+          </div>
           )}
         </div>
       )}
